@@ -1,11 +1,12 @@
 <?php
 
   if ($_GET['city']) {
-    $forecastPage = file_get_contents("http://www.weather-forecast.com/locations/".$_GET['city']."/forecasts/latest");
+    $_GET['city'] = str_ireplace(' ','', $_GET['city']);
+    $forecast = file_get_contents("http://www.weather-forecast.com/locations/".$_GET['city']."/forecasts/latest");
 
-    $pageArray = explode('3 Day Weather Forecast Summary:</b><span class="read-more-small"><span class="read-more-content"> <span class="phrase">', $forecastPage);
-    $secondPageArray = explode('</span></span></span>',$pageArray[1]);
-    $weather = $secondPageArray[0];
+    $beforeForecastArray = explode('3 Day Weather Forecast Summary:</b><span class="read-more-small"><span class="read-more-content"> <span class="phrase">', $forecast);
+    $afterForecastArray = explode('</span></span></span>',$beforeForecastArray[1]);
+    $cityWeather = $afterForecastArray[0];
    }
 ?>
 
@@ -72,8 +73,8 @@
       <div id="weather">
         <?php
 
-          if ($weather){
-            echo '<div class="alert alert-success" role="alert">'.$weather.'</div>';
+          if ($cityWeather){
+            echo '<div class="alert alert-success" role="alert">'.$cityWeather.'</div>';
 
           }
 
