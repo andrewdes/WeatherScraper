@@ -1,13 +1,12 @@
 <?php
 
   if ($_GET['city']) {
-
     $forecastPage = file_get_contents("http://www.weather-forecast.com/locations/London/forecasts/latest");
 
     $pageArray = explode('3 Day Weather Forecast Summary:</b><span class="read-more-small"><span class="read-more-content"> <span class="phrase">', $forecastPage);
-
-    echo $pageArray[1];
-  }
+    $secondPageArray = explode('</span></span></span>',$pageArray[1]);
+    $weather = $secondPageArray[0];
+   }
 ?>
 
 <!DOCTYPE html>
@@ -38,13 +37,17 @@
 
       .container{
         text-align: center;
-        margin-top: 200px;
+        margin-top: 150px;
         width: 450px;
       }
 
       input{
         margin: 20px 0;
 
+      }
+
+      #weather{
+        margin-top: 15px;
       }
 
     </style>
@@ -65,6 +68,18 @@
 
         <button type="submit" class="btn btn-primary">Submit</button>
       </form>
+
+      <div id="weather">
+        <?php
+
+          if ($weather){
+            echo '<div class="alert alert-success" role="alert">'.$weather.'</div>';
+
+          }
+
+        ?>
+      </div>
+
     </div>
 
     <!-- jQuery first, then Tether, then Bootstrap JS. -->
