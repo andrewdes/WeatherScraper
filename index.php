@@ -1,12 +1,26 @@
 <?php
 
-  if ($_GET['city']) {
-    $_GET['city'] = str_ireplace(' ','', $_GET['city']);
-    $forecast = file_get_contents("http://www.weather-forecast.com/locations/".$_GET['city']."/forecasts/latest");
+  $cityWeather = "";
+  $error = "";
 
-    $beforeForecastArray = explode('3 Day Weather Forecast Summary:</b><span class="read-more-small"><span class="read-more-content"> <span class="phrase">', $forecast);
-    $afterForecastArray = explode('</span></span></span>',$beforeForecastArray[1]);
-    $cityWeather = $afterForecastArray[0];
+  if ($_GET['city']) {
+    $city = str_ireplace(' ','', $_GET['city']);
+
+    $file_headers = @get_headers("http://www.weather-forecast.com/locations/".$city."/forecasts/latest");
+
+    if ($file_headers[0] == 'HTTP/1.1 404 Not Found'){
+      $error = "Invalid City";
+    }
+    else{
+      $forecast = file_get_contents("http://www.weather-forecast.com/locations/".$city."/forecasts/latest");
+
+      $beforeForecastArray = explode('3 Day Weather Forecast Summary:</b><span class="read-more-small"><span class="read-more-content"> <span class="phrase">', $forecast);
+
+
+      $afterForecastArray = explode('</span></span></span>',$beforeForecastArray[1]);
+      $cityWeather = $afterForecastArray[0];
+    }
+
    }
 ?>
 
@@ -64,7 +78,7 @@
       <form>
         <div class="form-group">
           <label for="city">Enter the name of a city</label>
-          <input type="text" class="form-control" name="city" id="city" placeholder="Eg. London, Tokyo">
+          <input type="text" class="form-control" name="city" id="city" placeholder="Eg. Toronto, London" value="<?php echo $_GET['city'] ?>">
         </div>
 
         <button type="submit" class="btn btn-primary">Submit</button>
@@ -76,6 +90,9 @@
           if ($cityWeather){
             echo '<div class="alert alert-success" role="alert">'.$cityWeather.'</div>';
 
+          }
+          else if ($error){
+            echo '<div class="alert alert-danger" role="alert">'.$error.'</div>';
           }
 
         ?>
