@@ -3,7 +3,7 @@
   $cityWeather = "";
   $error = "";
 
-  if ($_GET['city']) {
+  if (array_key_exists('city', $_GET)) {
     $city = str_ireplace(' ','', $_GET['city']);
 
     $file_headers = @get_headers("http://www.weather-forecast.com/locations/".$city."/forecasts/latest");
@@ -93,7 +93,7 @@
       <form>
         <div class="form-group">
           <label for="city">Enter the name of a city</label>
-          <input type="text" class="form-control" name="city" id="city" placeholder="Eg. Toronto, Ottawa" value="<?php echo $_GET['city'] ?>">
+          <input type="text" class="form-control" name="city" id="city" placeholder="Eg. Toronto, Ottawa" value="<?php if (array_key_exists('city', $_GET)) { echo $_GET['city']; }?>">
         </div>
 
         <button type="submit" class="btn btn-primary">Submit</button>
