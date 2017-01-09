@@ -9,16 +9,31 @@
     $file_headers = @get_headers("http://www.weather-forecast.com/locations/".$city."/forecasts/latest");
 
     if ($file_headers[0] == 'HTTP/1.1 404 Not Found'){
-      $error = "Invalid City";
+      $error = "Invalid city.";
     }
     else{
       $forecast = file_get_contents("http://www.weather-forecast.com/locations/".$city."/forecasts/latest");
 
       $beforeForecastArray = explode('3 Day Weather Forecast Summary:</b><span class="read-more-small"><span class="read-more-content"> <span class="phrase">', $forecast);
 
+      if ((sizeof ($beforeForecastArray)) > 1){
 
-      $afterForecastArray = explode('</span></span></span>',$beforeForecastArray[1]);
-      $cityWeather = $afterForecastArray[0];
+        $afterForecastArray = explode('</span></span></span>',$beforeForecastArray[1]);
+
+        if ((sizeof ($afterForecastArray)) > 1){
+          $cityWeather = $afterForecastArray[0];
+
+        }
+        else{
+          $error = "Invalid city.";
+        }
+
+      }
+      else{
+        $error = "Invalid city.";
+
+      }
+
     }
 
    }
@@ -78,7 +93,7 @@
       <form>
         <div class="form-group">
           <label for="city">Enter the name of a city</label>
-          <input type="text" class="form-control" name="city" id="city" placeholder="Eg. Toronto, London" value="<?php echo $_GET['city'] ?>">
+          <input type="text" class="form-control" name="city" id="city" placeholder="Eg. Toronto, Ottawa" value="<?php echo $_GET['city'] ?>">
         </div>
 
         <button type="submit" class="btn btn-primary">Submit</button>
