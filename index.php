@@ -96,14 +96,14 @@
           <input type="text" class="form-control" name="city" id="city" placeholder="Eg. Toronto, Ottawa" value="<?php if (array_key_exists('city', $_GET)) { echo $_GET['city']; }?>">
         </div>
 
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="submit" class="btn btn-primary">Get Weather</button>
       </form>
 
       <div id="weather">
         <?php
 
           if ($cityWeather){
-            echo '<div class="alert alert-success" role="alert">'.$cityWeather.'</div>';
+            echo '<div class="alert alert-info" role="alert">'.$cityWeather.'</div>';
 
           }
           else if ($error){
