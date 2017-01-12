@@ -4,14 +4,18 @@
   $error = "";
 
   if (array_key_exists('city', $_GET)) {
+
     $city = str_ireplace(' ','', $_GET['city']);
 
     $file_headers = @get_headers("http://www.weather-forecast.com/locations/".$city."/forecasts/latest");
 
     if ($file_headers[0] == 'HTTP/1.1 404 Not Found'){
+
       $error = "Invalid city.";
+
     }
     else{
+
       $forecast = file_get_contents("http://www.weather-forecast.com/locations/".$city."/forecasts/latest");
 
       $beforeForecastArray = explode('3 Day Weather Forecast Summary:</b><span class="read-more-small"><span class="read-more-content"> <span class="phrase">', $forecast);
@@ -37,7 +41,11 @@
     }
 
    }
+
+
 ?>
+
+<!-- Start of HTML -->
 
 <!DOCTYPE html>
 <html lang="en">
@@ -103,11 +111,15 @@
         <?php
 
           if ($cityWeather){
+
             echo '<div class="alert alert-info" role="alert">'.$cityWeather.'</div>';
+
 
           }
           else if ($error){
+
             echo '<div class="alert alert-danger" role="alert">'.$error.'</div>';
+            
           }
 
         ?>
