@@ -5,43 +5,37 @@
 
   if (array_key_exists('city', $_GET)) {
 
-    $city = str_ireplace(' ','', $_GET['city']);
+    $weatherContent = file_get_contents("http://api.openweathermap.org/data/2.5/weather?q=".urlencode($_GET['city'])."&units=metric&appid=52839b7f18de0f3324e5a3fe64bc8bee");
 
-    $file_headers = @get_headers("http://www.weather-forecast.com/locations/".$city."/forecasts/latest");
+    $contentArray = json_decode($weatherContent, true);
 
-    if ($file_headers[0] == 'HTTP/1.1 404 Not Found'){
+    if($contentArray['cod'] == 200){
 
-      $error = "Invalid city.";
-
-    }
-    else{
-
-      $forecast = file_get_contents("http://www.weather-forecast.com/locations/".$city."/forecasts/latest");
-
-      $beforeForecastArray = explode('3 Day Weather Forecast Summary:</b><span class="read-more-small"><span class="read-more-content"> <span class="phrase">', $forecast);
-
-      if ((sizeof ($beforeForecastArray)) > 1){
-
-        $afterForecastArray = explode('</span></span></span>',$beforeForecastArray[1]);
-
-        if ((sizeof ($afterForecastArray)) > 1){
-          $cityWeather = $afterForecastArray[0];
-
-        }
-        else{
-          $error = "Invalid city.";
-        }
-
+      if($_GET['temp'] == 'true'){
+        $cityWeather .= "The temperature is ".$contentArray['main']['temp']." &deg;C. ";
       }
-      else{
-        $error = "Invalid city.";
-
+      if($_GET['windspeed'] == 'true'){
+        $cityWeather .= "The windspeed is ".$contentArray['wind']['speed']." meters/sec. ";
+      }
+      if($_GET['citylocation'] == 'true'){
+        $cityWeather .= "The longitude is ".$contentArray['coord']['lon'];
+        $cityWeather .= " and the latitude is ".$contentArray['coord']['lat'].". ";
+      }
+      if($_GET['pressure'] == 'true'){
+        $cityWeather .= "The pressure is ".$contentArray['main']['pressure']."hPa. ";
+      }
+      if($_GET['humidity'] == 'true'){
+        $cityWeather .= "The humidity is ".$contentArray['main']['humidity']."%. ";
+      }
+      if($_GET['weatherdesc'] == 'true'){
+        $cityWeather .= "The weather in ".$_GET['city']." is currently ".$contentArray['weather'][0]['description'].". ";
       }
 
+    }else{
+      $error = "Could not find the city. Please try again!";
     }
 
-   }
-
+  }
 
 ?>
 
@@ -54,7 +48,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <title>Weather Scraper</title>
+    <title>Whats the weather?</title>
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
@@ -88,6 +82,12 @@
         margin-top: 15px;
       }
 
+      .checkbox-grid li {
+        display: block;
+        float: left;
+        width: 30%;
+      }
+
     </style>
 
 
@@ -104,6 +104,15 @@
           <input type="text" class="form-control" name="city" id="city" placeholder="Eg. Toronto, Ottawa" value="<?php if (array_key_exists('city', $_GET)) { echo $_GET['city']; }?>">
         </div>
 
+        <ul class="checkbox-grid">
+          <li><input type="checkbox" name="temp" value="true">Temperature</input></li>
+          <li><input type="checkbox" name="windspeed" value="true">Wind Speed</input></li>
+          <li><input type="checkbox" name="citylocation" value="true">City Location</input></li>
+          <li><input type="checkbox" name="pressure" value="true">Pressure</input></li>
+          <li><input type="checkbox" name="humidity" value="true">Humidity</input></li>
+          <li><input type="checkbox" name="weatherdesc" value="true">Description</input></li>
+        </ul>
+
         <button type="submit" class="btn btn-primary">Get Weather</button>
       </form>
 
@@ -119,7 +128,7 @@
           else if ($error){
 
             echo '<div class="alert alert-danger" role="alert">'.$error.'</div>';
-            
+
           }
 
         ?>
